@@ -27,4 +27,13 @@
         </activity>
     </application>
 
+    <!-- pongo la clave de api que me da google -->
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyAEY3W5nXxRd1aAGxnjqjNKmLqZEyksn44"/>
+
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version" />
+
 </manifest>

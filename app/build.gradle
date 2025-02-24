@@ -67,6 +67,9 @@ dependencies {
 
     implementation 'org.osmdroid:osmdroid-android:6.1.14'
 
+    //dependencia para usar OpenStreetMap
+    implementation 'org.osmdroid:osmdroid-android:6.1.14'
+
 
 
 }

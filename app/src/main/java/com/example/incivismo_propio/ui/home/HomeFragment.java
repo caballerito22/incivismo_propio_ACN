@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
         //Agregar evento al botón de reportar
         binding.buttonReportar.setOnClickListener(button -> {
             Incidencia incidencia = new Incidencia();
-            incidencia.setDireccio(binding.editTextUbi.getText().toString());
+            incidencia.setUbicacion(binding.editTextUbi.getText().toString());
             incidencia.setLatitud(binding.editTextLatitud.getText().toString());
             incidencia.setLongitud(binding.editTextLongitud.getText().toString());
             incidencia.setProblema(binding.editTextProblema.getText().toString());
