@@ -19,6 +19,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.IOException;
@@ -29,6 +30,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SharedViewModel extends AndroidViewModel {
+    //para obtener la latutud y la longitud
+    private final MutableLiveData<LatLng> currentLatLng = new MutableLiveData<>();
+
     private final Application app;
     //direccion actual
     private static final MutableLiveData<String> currentAddress = new MutableLiveData<>();
@@ -43,7 +47,12 @@ public class SharedViewModel extends AndroidViewModel {
     FusedLocationProviderClient mFusedLocationClient;
 
     //codigo para guardar usuario logeado de firebase
-    private MutableLiveData<FirebaseUser> user = new MutableLiveData<>();;
+    private MutableLiveData<FirebaseUser> user = new MutableLiveData<>();
+
+    //retornamos el livedata de la latitud y la longitud
+    public MutableLiveData<LatLng> getCurrentLatLng() {
+        return currentLatLng;
+    }
     public LiveData<FirebaseUser> getUser() {
         return user;
     }
@@ -173,8 +182,12 @@ public class SharedViewModel extends AndroidViewModel {
                     String finalResultMessage = resultMessage;
                     handler.post(() -> {
                         // Aquest codi s'executa en primer pla.
-                        if (mTrackingLocation)
+                        if (mTrackingLocation) {
                             currentAddress.postValue(String.format("Direcció: %1$s \n Hora: %2$tr", finalResultMessage, System.currentTimeMillis()));
+                        }
+                        //actualizamos latitud y longitud
+                        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+                        currentLatLng.postValue(latlng);
                     });
                 }
 

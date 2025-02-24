@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "764769922052",
+    "firebase_url": "https://incivismo-propio-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "incivismo-propio",
     "storage_bucket": "incivismo-propio.firebasestorage.app"
   },

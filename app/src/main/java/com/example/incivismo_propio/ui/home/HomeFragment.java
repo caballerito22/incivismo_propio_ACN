@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.incivismo_propio.Incidencia;
 import com.example.incivismo_propio.databinding.FragmentHomeBinding;
 import com.example.incivismo_propio.ui.SharedViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,6 +35,9 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +47,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
+
+    //creo una instancia
+    private FirebaseAuth auth;
+
     private FusedLocationProviderClient mFusedLocationClient;
 
     private boolean mTrackingLocation;
@@ -62,30 +70,56 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         //obtiene los views model para los datos
-        SharedViewModel sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+        SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         //obtiene la direccion y la actualoza
         SharedViewModel.getCurrentAddress().observe(getViewLifecycleOwner(), address -> {
-            binding.localitzacio.setText(String.format(
+            binding.editTextUbi.setText(String.format(
                     "Direcció: %1$s \n Hora: %2$tr",
                     address, System.currentTimeMillis()));
         });
 
+        //para poner la latitud y la longitud
+        sharedViewModel.getCurrentLatLng().observe(getViewLifecycleOwner(), latlng -> {
+            binding.editTextLatitud.setText(String.valueOf(latlng.latitude));
+            binding.editTextLongitud.setText(String.valueOf(latlng.longitude));
+        });
+
         //obtiene un string del sharedViewModel, obrerva cambios, y lo actualiza (cambia el texto del botón solo)
-        sharedViewModel.getButtonText().observe(getViewLifecycleOwner(), s -> binding.buttonLocation.setText(s));
+        sharedViewModel.getButtonText().observe(getViewLifecycleOwner(), s -> binding.buttonBuscarCampos.setText(s));
         //si está visible muestra la barra, si no no
-        sharedViewModel.getProgressBar().observe(getViewLifecycleOwner(), visible -> {
+       /* sharedViewModel.getProgressBar().observe(getViewLifecycleOwner(), visible -> {
             if (visible)
                 binding.loading.setVisibility(ProgressBar.VISIBLE);
             else
                 binding.loading.setVisibility(ProgressBar.INVISIBLE);
-        });
+        });*/
 
         //cuando le damos al boton sale el mensaje
-        binding.buttonLocation.setOnClickListener(view -> {
+        binding.buttonBuscarCampos.setOnClickListener(view -> {
             Log.d("DEBUG", "Obtenemos ubi");
             sharedViewModel.switchTrackingLocation();
         });
+
+        //Agregar evento al botón de reportar
+        binding.buttonReportar.setOnClickListener(button -> {
+            Incidencia incidencia = new Incidencia();
+            incidencia.setDireccio(binding.editTextUbi.getText().toString());
+            incidencia.setLatitud(binding.editTextLatitud.getText().toString());
+            incidencia.setLongitud(binding.editTextLongitud.getText().toString());
+            incidencia.setProblema(binding.editTextProblema.getText().toString());
+
+            //conectamos a firebase
+            auth = FirebaseAuth.getInstance();
+            DatabaseReference base = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference users = base.child("users");
+            DatabaseReference uid = users.child(auth.getUid());
+            DatabaseReference incidencies = uid.child("incidencies");
+
+            DatabaseReference reference = incidencies.push();
+            reference.setValue(incidencia);
+        });
+
 
         return root;
     }
@@ -153,10 +187,10 @@ public class HomeFragment extends Fragment {
             Toast.makeText(requireContext(), "permisos aceptados", Toast.LENGTH_SHORT).show();
             mFusedLocationClient.requestLocationUpdates(getLocationRequest(), mLocationCallback, null);
         }
-        binding.localitzacio.setText("Carregant...");
-        binding.loading.setVisibility(ProgressBar.VISIBLE);
+        binding.editTextUbi.setText("Carregant...");
+        //binding.loading.setVisibility(ProgressBar.VISIBLE);
         mTrackingLocation = true;
-        binding.buttonLocation.setText("Aturar el seguiment de la ubicació");
+        binding.buttonBuscarCampos.setText("Aturar el seguiment de la ubicació");
     }
 
     //coverte la localizacion en texto, si no, nos dice el erroe
@@ -208,7 +242,7 @@ public class HomeFragment extends Fragment {
                     //por si desactiva las actualizaciones de localizacion
                     if (mTrackingLocation) {
                         // Aquest codi s'executa en primer pla.
-                        binding.localitzacio.setText(String.format("Direcció: %1$s \n Hora: %2$tr", finalResultMessage, System.currentTimeMillis()));
+                        binding.editTextUbi.setText(String.format("Direcció: %1$s \n Hora: %2$tr", finalResultMessage, System.currentTimeMillis()));
                     }
                 });
             }
@@ -240,9 +274,9 @@ public class HomeFragment extends Fragment {
 
     private void stopTrackingLocation() {
         if (mTrackingLocation) {
-            binding.loading.setVisibility(ProgressBar.INVISIBLE);
+            //binding.loading.setVisibility(ProgressBar.INVISIBLE);
             mTrackingLocation = false;
-            binding.buttonLocation.setText("Comença a seguir la ubicació");
+            binding.buttonBuscarCampos.setText("Comença a seguir la ubicació");
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 
         }
