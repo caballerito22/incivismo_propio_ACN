@@ -11,12 +11,12 @@
         android:id="@+id/textViewTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="Buscar campos y árbitros"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLocation"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:hint="Introduce una ciudad o dirección"
             android:inputType="text"
-            android:text="Introduce una ciudad o dirección" />
+            android:text="Escribe el campo de fútbol" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -81,40 +81,50 @@
             android:text="Longitud del campo" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputArbitro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Árbitro"
+        app:layout_constraintTop_toBottomOf="@id/textInputLongitude"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextArbitro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Introduce el árbitro"
+            android:text="Informa al árbitro" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/buttonBuscarCampos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="16dp"
         android:text="Buscar Campos"
-        app:layout_constraintTop_toBottomOf="@id/textInputLongitude"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
-
-    <Button
-        android:id="@+id/buttonBuscarArbitros"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Buscar Árbitros"
-        app:layout_constraintTop_toBottomOf="@id/buttonBuscarCampos"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintTop_toBottomOf="@id/textInputLongitude" />
 
     <TextView
         android:id="@+id/textViewReportar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reportar reporte"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonBuscarArbitros"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:text="Reportar informe"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonBuscarCampos" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputProblem"
@@ -141,11 +151,39 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Enviar Reporte"
-        app:layout_constraintTop_toBottomOf="@id/textInputProblem"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textInputProblem" />
+
+    <!--
+     este es para la foto-->
+    <Button
+        android:id="@+id/button_foto"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fotografía"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/foto"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/buttonReportar" />
+
+    <!-- IlaX" -->
+    <ImageView
+        android:id="@+id/foto"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@android:drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_foto"
+        app:layout_constraintTop_toBottomOf="@id/button_foto"
+        android:layout_marginBottom="48dp"
         android:layout_marginEnd="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

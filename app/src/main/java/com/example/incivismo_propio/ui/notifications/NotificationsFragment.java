@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.incivismo_propio.R;
 import com.example.incivismo_propio.Reporte;
 import com.example.incivismo_propio.databinding.FragmentNotificationsBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +33,7 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private FirebaseAuth auth;
-    private DatabaseReference incidencias;
+    private DatabaseReference camposFutbolRef;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,17 +48,17 @@ public class NotificationsFragment extends Fragment {
         binding.map.setTileSource(TileSourceFactory.MAPNIK);
         binding.map.setMultiTouchControls(true);
         IMapController mapController = binding.map.getController();
-        mapController.setZoom(14.5);
+        mapController.setZoom(7.5);
 
-        //esto llo po go para que se me abra en castellón
-        GeoPoint castellon = new GeoPoint(39.9864, -0.0513);
-        mapController.setCenter(castellon);
+        //españa
+        GeoPoint españa = new GeoPoint(40.4531, -3.6883);
+        mapController.setCenter(españa);
 
-        // Añadir marcador en Castellón
-        Marker startMarker = new Marker(binding.map);
-        startMarker.setPosition(castellon);
-        startMarker.setTitle("Castellón de la Plana");
-        binding.map.getOverlays().add(startMarker);
+        // Añadir marcador en el Bernabéu
+        /*Marker startMarker = new Marker(binding.map);
+        startMarker.setPosition(bernabeu);
+        startMarker.setTitle("Santiago Bernabéu");
+        binding.map.getOverlays().add(startMarker);*/
 
         // Mostrar ubicación del usuario
         MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), binding.map);
@@ -69,31 +70,30 @@ public class NotificationsFragment extends Fragment {
         compassOverlay.enableCompass();
         binding.map.getOverlays().add(compassOverlay);
 
-        // Conectar a Firebase
-        auth = FirebaseAuth.getInstance();
+        // Conectar a Firebase y obtener la referencia de los campos de fútbol
         DatabaseReference base = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference users = base.child("users");
-        DatabaseReference uid = users.child(auth.getUid());
-        incidencias = uid.child("incidencias");
+        camposFutbolRef = base.child("campos_futbol");
 
-
-        // Cargar marcadores de Firebase
-        incidencias.addChildEventListener(new ChildEventListener() {
+        // Cargar marcadores de campos de fútbol desde Firebase
+        camposFutbolRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
-                Reporte reporte = snapshot.getValue(Reporte.class);
-                if (reporte != null) {
-                    GeoPoint location = new GeoPoint(
-                            Double.parseDouble(reporte.getLatitud()),
-                            Double.parseDouble(reporte.getLongitud())
-                    );
+                if (snapshot.exists()) {
+                    String nombre = snapshot.child("nombre").getValue(String.class);
+                    Double latitud = snapshot.child("latitud").getValue(Double.class);
+                    Double longitud = snapshot.child("longitud").getValue(Double.class);
 
-                    Marker marker = new Marker(binding.map);
-                    marker.setPosition(location);
-                    marker.setTitle(reporte.getProblema());
-                    marker.setSnippet(reporte.getUbicacion());
+                    if (nombre != null && latitud != null && longitud != null) {
+                        GeoPoint location = new GeoPoint(latitud, longitud);
 
-                    binding.map.getOverlays().add(marker);
+                        Marker marker = new Marker(binding.map);
+                        marker.setPosition(location);
+                        marker.setTitle(nombre);
+                        marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); // Asegúrate de tener un icono adecuado
+
+                        binding.map.getOverlays().add(marker);
+                        binding.map.invalidate();
+                    }
                 }
             }
 

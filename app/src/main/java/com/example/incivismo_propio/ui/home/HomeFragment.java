@@ -31,6 +31,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,59 +45,56 @@ import java.util.concurrent.Executors;
 public class HomeFragment extends Fragment {
 
     //creo una instancia
-    private FirebaseAuth auth;
 
+
+    private ActivityResultLauncher<String[]> locationPermissionRequest;
+
+    private FragmentHomeBinding binding;
+
+    private Location mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
 
     private boolean mTrackingLocation;
-
     private LocationCallback mLocationCallback;
+    private FirebaseUser authUser;
 
-    private ActivityResultLauncher<String[]> locationPermissionRequest;
-    private FragmentHomeBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
 
-        //PARA CONVERTIR LOS ELEMENTOS DEL fragment_home EN VISTA (LOS INFLA)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        SharedViewModel homeViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        //obtiene los views model para los datos
         SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        //obtiene la direccion y la actualoza
         SharedViewModel.getCurrentAddress().observe(getViewLifecycleOwner(), address -> {
             binding.editTextUbi.setText(String.format(
                     "Direcció: %1$s \n Hora: %2$tr",
-                    address, System.currentTimeMillis()));
+                    address, System.currentTimeMillis())
+            );
         });
-
-        //para poner la latitud y la longitud
+        //lo se usa aqui también se puede usar en el notification
         sharedViewModel.getCurrentLatLng().observe(getViewLifecycleOwner(), latlng -> {
-            binding.editTextLatitud.setText(String.valueOf(latlng.latitude));
-            binding.editTextLongitud.setText(String.valueOf(latlng.longitude));
+            binding.editTextLongitud.setText(String.valueOf(latlng.latitude));
+            binding.editTextLatitud.setText(String.valueOf(latlng.longitude));
         });
 
-        //obtiene un string del sharedViewModel, obrerva cambios, y lo actualiza (cambia el texto del botón solo)
-        sharedViewModel.getButtonText().observe(getViewLifecycleOwner(), s -> binding.buttonBuscarCampos.setText(s));
-        //si está visible muestra la barra, si no no
-       /* sharedViewModel.getProgressBar().observe(getViewLifecycleOwner(), visible -> {
+/*
+        sharedViewModel.getProgressBar().observe(getViewLifecycleOwner(), visible -> {
             if (visible)
                 binding.loading.setVisibility(ProgressBar.VISIBLE);
             else
                 binding.loading.setVisibility(ProgressBar.INVISIBLE);
-        });*/
+        });
+*/
 
-        //cuando le damos al boton sale el mensaje
-        binding.buttonBuscarCampos.setOnClickListener(view -> {
-            Log.d("DEBUG", "Obtenemos ubi");
-            sharedViewModel.switchTrackingLocation();
+        sharedViewModel.switchTrackingLocation();
+
+        sharedViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            authUser = user;
         });
 
-        //Agregar evento al botón de reportar
         binding.buttonReportar.setOnClickListener(button -> {
             Reporte reporte = new Reporte();
             reporte.setUbicacion(binding.editTextUbi.getText().toString());
@@ -104,11 +102,11 @@ public class HomeFragment extends Fragment {
             reporte.setLongitud(binding.editTextLongitud.getText().toString());
             reporte.setProblema(binding.editTextProblema.getText().toString());
 
-            //conectamos a firebase
-            auth = FirebaseAuth.getInstance();
+
+
             DatabaseReference base = FirebaseDatabase.getInstance().getReference();
             DatabaseReference users = base.child("users");
-            DatabaseReference uid = users.child(auth.getUid());
+            DatabaseReference uid = users.child(authUser.getUid());
             DatabaseReference incidencies = uid.child("incidencies");
 
             DatabaseReference reference = incidencies.push();
