@@ -14,27 +14,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.incivismo_propio.Incidencia;
+import com.example.incivismo_propio.Reporte;
 import com.example.incivismo_propio.databinding.FragmentHomeBinding;
 import com.example.incivismo_propio.ui.SharedViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -103,11 +98,11 @@ public class HomeFragment extends Fragment {
 
         //Agregar evento al botón de reportar
         binding.buttonReportar.setOnClickListener(button -> {
-            Incidencia incidencia = new Incidencia();
-            incidencia.setUbicacion(binding.editTextUbi.getText().toString());
-            incidencia.setLatitud(binding.editTextLatitud.getText().toString());
-            incidencia.setLongitud(binding.editTextLongitud.getText().toString());
-            incidencia.setProblema(binding.editTextProblema.getText().toString());
+            Reporte reporte = new Reporte();
+            reporte.setUbicacion(binding.editTextUbi.getText().toString());
+            reporte.setLatitud(binding.editTextLatitud.getText().toString());
+            reporte.setLongitud(binding.editTextLongitud.getText().toString());
+            reporte.setProblema(binding.editTextProblema.getText().toString());
 
             //conectamos a firebase
             auth = FirebaseAuth.getInstance();
@@ -117,7 +112,7 @@ public class HomeFragment extends Fragment {
             DatabaseReference incidencies = uid.child("incidencies");
 
             DatabaseReference reference = incidencies.push();
-            reference.setValue(incidencia);
+            reference.setValue(reporte);
         });
 
 

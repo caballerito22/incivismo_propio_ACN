@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.incivismo_propio.Incidencia;
+import com.example.incivismo_propio.Reporte;
 import com.example.incivismo_propio.databinding.FragmentDashboardBinding;
 
 import com.example.incivismo_propio.databinding.RvReportesBinding;
@@ -49,8 +49,8 @@ public class DashboardFragment extends Fragment {
                 DatabaseReference uid = users.child(user.getUid());
                 DatabaseReference reporte = uid.child("incidencies");
 
-                FirebaseRecyclerOptions<Incidencia> options = new FirebaseRecyclerOptions.Builder<Incidencia>()
-                        .setQuery(reporte, Incidencia.class)
+                FirebaseRecyclerOptions<Reporte> options = new FirebaseRecyclerOptions.Builder<Reporte>()
+                        .setQuery(reporte, Reporte.class)
                         .setLifecycleOwner(this)
                         .build();
 
@@ -69,14 +69,14 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
-    class IncidenciaAdapter extends FirebaseRecyclerAdapter<Incidencia, IncidenciaAdapter.IncidenciaViewholder> {
-        public IncidenciaAdapter(@NonNull FirebaseRecyclerOptions<Incidencia> options) {
+    class IncidenciaAdapter extends FirebaseRecyclerAdapter<Reporte, IncidenciaAdapter.IncidenciaViewholder> {
+        public IncidenciaAdapter(@NonNull FirebaseRecyclerOptions<Reporte> options) {
             super(options);
         }
 
         @Override
         protected void onBindViewHolder(
-        @NonNull IncidenciaViewholder holder, int position, @NonNull Incidencia model
+        @NonNull IncidenciaViewholder holder, int position, @NonNull Reporte model
             ) {
 
             holder.binding.txtDescripcio.setText(model.getProblema());

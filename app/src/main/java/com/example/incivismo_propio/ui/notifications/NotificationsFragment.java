@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.incivismo_propio.Incidencia;
+import com.example.incivismo_propio.Reporte;
 import com.example.incivismo_propio.databinding.FragmentNotificationsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -80,17 +80,17 @@ public class NotificationsFragment extends Fragment {
         incidencias.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
-                Incidencia incidencia = snapshot.getValue(Incidencia.class);
-                if (incidencia != null) {
+                Reporte reporte = snapshot.getValue(Reporte.class);
+                if (reporte != null) {
                     GeoPoint location = new GeoPoint(
-                            Double.parseDouble(incidencia.getLatitud()),
-                            Double.parseDouble(incidencia.getLongitud())
+                            Double.parseDouble(reporte.getLatitud()),
+                            Double.parseDouble(reporte.getLongitud())
                     );
 
                     Marker marker = new Marker(binding.map);
                     marker.setPosition(location);
-                    marker.setTitle(incidencia.getProblema());
-                    marker.setSnippet(incidencia.getUbicacion());
+                    marker.setTitle(reporte.getProblema());
+                    marker.setSnippet(reporte.getUbicacion());
 
                     binding.map.getOverlays().add(marker);
                 }

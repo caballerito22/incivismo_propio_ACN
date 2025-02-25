@@ -1,15 +1,15 @@
 package com.example.incivismo_propio;
 
-public class Incidencia {
+public class Reporte {
     private String ubicacion;
     private String latitud;
     private String longitud;
     private String problema;
 
-    public Incidencia() {
+    public Reporte() {
     }
 
-    public Incidencia(String ubicacion, String latitud, String longitud, String problema) {
+    public Reporte(String ubicacion, String latitud, String longitud, String problema) {
         this.ubicacion = ubicacion;
         this.latitud = latitud;
         this.longitud = longitud;
