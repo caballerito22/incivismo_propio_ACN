@@ -76,6 +76,7 @@ public class NotificationsFragment extends Fragment {
         DatabaseReference uid = users.child(auth.getUid());
         incidencias = uid.child("incidencias");
 
+
         // Cargar marcadores de Firebase
         incidencias.addChildEventListener(new ChildEventListener() {
             @Override
