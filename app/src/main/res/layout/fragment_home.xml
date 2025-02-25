@@ -55,7 +55,6 @@
             android:id="@+id/editTextLatitud"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:hint="Latitud del campo"
             android:text="Latitud del campo" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -76,7 +75,6 @@
             android:id="@+id/editTextLongitud"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:hint="Longitud del campo"
             android:text="Longitud del campo" />
     </com.google.android.material.textfield.TextInputLayout>
