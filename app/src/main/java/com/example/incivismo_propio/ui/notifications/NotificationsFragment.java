@@ -80,6 +80,8 @@ public class NotificationsFragment extends Fragment {
 
         // Cargar marcadores de campos de fútbol desde Firebase
         camposFutbolRef.addChildEventListener(new ChildEventListener() {
+
+            //yo aqui le he dicho que lo haga solo una vez, tengo en firebase que cerrarlo y que lo vuelva a abrir y salga
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
                 if (snapshot.exists()) {
