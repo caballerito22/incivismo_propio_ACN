@@ -5,15 +5,17 @@ public class Reporte {
     private String latitud;
     private String longitud;
     private String problema;
+    private String url;
 
     public Reporte() {
     }
 
-    public Reporte(String ubicacion, String latitud, String longitud, String problema) {
+    public Reporte(String ubicacion, String latitud, String longitud, String problema, String url) {
         this.ubicacion = ubicacion;
         this.latitud = latitud;
         this.longitud = longitud;
         this.problema = problema;
+        this.url = url;
     }
 
     public String getUbicacion() {
@@ -46,5 +48,13 @@ public class Reporte {
 
     public void setProblema(String problema) {
         this.problema = problema;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

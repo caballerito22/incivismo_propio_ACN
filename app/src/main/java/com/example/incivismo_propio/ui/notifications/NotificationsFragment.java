@@ -1,11 +1,13 @@
 package com.example.incivismo_propio.ui.notifications;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,6 +36,8 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private FirebaseAuth auth;
     private DatabaseReference camposFutbolRef;
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -89,7 +93,7 @@ public class NotificationsFragment extends Fragment {
                         Marker marker = new Marker(binding.map);
                         marker.setPosition(location);
                         marker.setTitle(nombre);
-                        marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); // Asegúrate de tener un icono adecuado
+                        marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); //es el bicho eso
 
                         binding.map.getOverlays().add(marker);
                         binding.map.invalidate();

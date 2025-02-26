@@ -2,18 +2,25 @@ package com.example.incivismo_propio.ui.home;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -21,9 +28,12 @@ import android.Manifest;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.example.incivismo_propio.R;
 import com.example.incivismo_propio.Reporte;
 import com.example.incivismo_propio.databinding.FragmentHomeBinding;
 import com.example.incivismo_propio.ui.SharedViewModel;
@@ -35,8 +45,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -57,6 +70,10 @@ public class HomeFragment extends Fragment {
     private boolean mTrackingLocation;
     private LocationCallback mLocationCallback;
     private FirebaseUser authUser;
+    String mCurrentPhotoPath;
+    private Uri photoURI;
+    private ImageView foto;
+    static final int REQUEST_TAKE_PHOTO = 1;
 
 
 
@@ -111,6 +128,13 @@ public class HomeFragment extends Fragment {
 
             DatabaseReference reference = incidencies.push();
             reference.setValue(reporte);
+        });
+
+        ImageView Foto = root.findViewById(R.id.foto);
+        Button buttonFoto = root.findViewById(R.id.button_foto);
+
+        buttonFoto.setOnClickListener(button -> {
+            dispatchTakePictureIntent();
         });
 
 
@@ -180,7 +204,8 @@ public class HomeFragment extends Fragment {
             Toast.makeText(requireContext(), "permisos aceptados", Toast.LENGTH_SHORT).show();
             mFusedLocationClient.requestLocationUpdates(getLocationRequest(), mLocationCallback, null);
         }
-        binding.editTextUbi.setText("Carregant...");
+        //lo comento para que no salga la ubi
+        //binding.editTextUbi.setText("Carregant...");
         //binding.loading.setVisibility(ProgressBar.VISIBLE);
         mTrackingLocation = true;
         binding.buttonBuscarCampos.setText("Aturar el seguiment de la ubicació");
@@ -272,6 +297,55 @@ public class HomeFragment extends Fragment {
             binding.buttonBuscarCampos.setText("Comença a seguir la ubicació");
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+
+
+        );
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(
+                getContext().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+
+            }
+
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(getContext(),
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO) {
+            if (resultCode == Activity.RESULT_OK) {
+                Glide.with(this).load(photoURI).into(foto);
+            } else {
+                Toast.makeText(getContext(),
+                        "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

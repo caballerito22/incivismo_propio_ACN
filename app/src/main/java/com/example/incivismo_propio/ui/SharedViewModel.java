@@ -130,7 +130,8 @@ public class SharedViewModel extends AndroidViewModel {
                     mLocationCallback, null
             );
 
-            currentAddress.postValue("Carregant...");
+            //he quitado que cuando lo ejecute me salga la ubi
+            //currentAddress.postValue("Carregant...");
 
             progressBar.postValue(true);
             mTrackingLocation = true;
@@ -180,7 +181,7 @@ public class SharedViewModel extends AndroidViewModel {
 
                     resultMessage = TextUtils.join("\n", addressParts);
                     String finalResultMessage = resultMessage;
-                    handler.post(() -> {
+                   /* handler.post(() -> {
                         // Aquest codi s'executa en primer pla.
                         if (mTrackingLocation) {
                             currentAddress.postValue(String.format("Direcció: %1$s \n Hora: %2$tr", finalResultMessage, System.currentTimeMillis()));
@@ -188,7 +189,7 @@ public class SharedViewModel extends AndroidViewModel {
                         //actualizamos latitud y longitud
                         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
                         currentLatLng.postValue(latlng);
-                    });
+                    });*/
                 }
 
             } catch (IOException ioException) {
