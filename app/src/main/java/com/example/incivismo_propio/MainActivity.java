@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
         sharedViewModel.getCheckPermission().observe(this, s -> checkPermission());
 
+
+        //aqui se miran los permisos
+
+        //hay que hacer que si el usuario sea admin, pueda hacer todo, si no solo los vee
         locationPermissionRequest = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
             Boolean fineLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false);
             Boolean coarseLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false);
