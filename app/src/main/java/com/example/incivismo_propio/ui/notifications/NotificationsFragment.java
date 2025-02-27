@@ -46,17 +46,17 @@ public class NotificationsFragment extends Fragment {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Configuración de OpenStreetMap
+        // Configuración de OpenStreetMap, para que salga el mapa
         Context ctx = requireActivity().getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        // Configurar el mapa
+        // Configurar el mapa, para el zoom
         binding.map.setTileSource(TileSourceFactory.MAPNIK);
         binding.map.setMultiTouchControls(true);
         IMapController mapController = binding.map.getController();
         mapController.setZoom(7.5);
 
-        //españa
+        //para qeu se abra en, españa
         GeoPoint españa = new GeoPoint(40.4531, -3.6883);
         mapController.setCenter(españa);
 
@@ -66,7 +66,7 @@ public class NotificationsFragment extends Fragment {
         startMarker.setTitle("Santiago Bernabéu");
         binding.map.getOverlays().add(startMarker);*/
 
-        // Mostrar ubicación del usuario
+        // Mostrar ubicación del usuario, aqui no sale, pero en movil android si
         MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), binding.map);
         myLocationOverlay.enableMyLocation();
         binding.map.getOverlays().add(myLocationOverlay);
@@ -76,6 +76,7 @@ public class NotificationsFragment extends Fragment {
         compassOverlay.enableCompass();
         binding.map.getOverlays().add(compassOverlay);
 
+        //coge la instacia de firebase
         auth = FirebaseAuth.getInstance();
 
         // Conectar a Firebase y obtener la referencia de los campos de fútbol
@@ -85,7 +86,7 @@ public class NotificationsFragment extends Fragment {
 
         DatabaseReference baseUID = users.child(auth.getUid());
 
-        camposFutbolRef = baseUID.child("incidencies");
+        camposFutbolRef = baseUID.child("reportes");
 
         Log.d("III",  camposFutbolRef.toString());
 
@@ -93,7 +94,6 @@ public class NotificationsFragment extends Fragment {
         // Cargar marcadores de campos de fútbol desde Firebase
         camposFutbolRef.addChildEventListener(new ChildEventListener() {
 
-            //yo aqui le he dicho que lo haga solo una vez, tengo en firebase que cerrarlo y que lo vuelva a abrir y salga
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
                 if (snapshot.exists()) {
@@ -104,13 +104,15 @@ public class NotificationsFragment extends Fragment {
                     Double longitud = snapshot.child("longitud").getValue(Double.class);
                     Log.d("BB", latitud + " " + longitud);
 
+
+                    //si el reporte no es nulo lo añade
                         if (reporte != null) {
                             GeoPoint location = new GeoPoint(latitud, longitud);
 
                             Marker marker = new Marker(binding.map);
                             marker.setPosition(location);
                             marker.setTitle(nombre);
-                            marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); //es el bicho eso
+                            marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); //es el bicho que he puesto eso
                             marker.setSnippet(reporte.getUbicacion());
 
                             binding.map.getOverlays().add(marker);

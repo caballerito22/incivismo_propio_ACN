@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         //aqui se miran los permisos
-
         //hay que hacer que si el usuario sea admin, pueda hacer todo, si no solo los vee
         locationPermissionRequest = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
             Boolean fineLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false);
@@ -110,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //cuando inicias la app
     @Override
     protected void onStart() {
         super.onStart();

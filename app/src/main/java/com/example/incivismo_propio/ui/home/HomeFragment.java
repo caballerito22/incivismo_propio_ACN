@@ -97,21 +97,16 @@ public class HomeFragment extends Fragment {
             binding.editTextLatitud.setText(String.valueOf(latlng.longitude));
         });
 
-/*
-        sharedViewModel.getProgressBar().observe(getViewLifecycleOwner(), visible -> {
-            if (visible)
-                binding.loading.setVisibility(ProgressBar.VISIBLE);
-            else
-                binding.loading.setVisibility(ProgressBar.INVISIBLE);
-        });
-*/
 
+        //es para empezar a obtener la ubi, en el shared está el metodo
         sharedViewModel.switchTrackingLocation();
 
+        //obtenemos el usuario de firebase
         sharedViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             authUser = user;
         });
 
+        //al hacer click en reporar...
         binding.buttonReportar.setOnClickListener(button -> {
             Reporte reporte = new Reporte();
             reporte.setUbicacion(binding.editTextUbi.getText().toString());
@@ -126,9 +121,9 @@ public class HomeFragment extends Fragment {
             DatabaseReference base = FirebaseDatabase.getInstance().getReference();
             DatabaseReference users = base.child("users");
             DatabaseReference uid = users.child(authUser.getUid());
-            DatabaseReference incidencies = uid.child("incidencies");
+            DatabaseReference reportes = uid.child("reportes");
 
-            DatabaseReference reference = incidencies.push();
+            DatabaseReference reference = reportes.push();
             reference.setValue(reporte);
         });
 
@@ -196,7 +191,7 @@ public class HomeFragment extends Fragment {
     */
 
 
-    //getLocation
+    //getLocation, que como ya no lo uso pues sale en gris.
     private void startTrackingLocation() {
         //comprobamos permisosos
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -214,7 +209,7 @@ public class HomeFragment extends Fragment {
     }
 
     //coverte la localizacion en texto, si no, nos dice el erroe
-    private void fetchAddress(Location location) {
+    /*private void fetchAddress(Location location) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -280,10 +275,10 @@ public class HomeFragment extends Fragment {
                     location.getLongitude(), illegalArgumentException);
         }
         });
-    }
+    }*/
 
 
-    //requisitos para las solicitudes de ubicación
+    //requisitos para las solicitudes de ubicación, esto devuelve la solicitud para la localizacion
     private LocationRequest getLocationRequest() {
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
@@ -292,6 +287,8 @@ public class HomeFragment extends Fragment {
         return locationRequest;
     }
 
+
+    //ya no se usa en mi proyecto
     private void stopTrackingLocation() {
         if (mTrackingLocation) {
             //binding.loading.setVisibility(ProgressBar.INVISIBLE);

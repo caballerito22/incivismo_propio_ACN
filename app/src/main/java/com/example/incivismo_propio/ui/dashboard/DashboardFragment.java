@@ -43,18 +43,20 @@ public class DashboardFragment extends Fragment {
         sharedViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             authUser = user;
 
+            //aqui obteenmos el usuario y cogemos los datos desde el firebase
+
             if (user != null) {
                 DatabaseReference base = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference users = base.child("users");
                 DatabaseReference uid = users.child(user.getUid());
-                DatabaseReference reporte = uid.child("incidencies");
+                DatabaseReference reporte = uid.child("reportes");
 
                 FirebaseRecyclerOptions<Reporte> options = new FirebaseRecyclerOptions.Builder<Reporte>()
                         .setQuery(reporte, Reporte.class)
                         .setLifecycleOwner(this)
                         .build();
 
-                IncidenciaAdapter adapter = new IncidenciaAdapter(options);
+                ReporteAdapter adapter = new ReporteAdapter(options);
                 binding.rvReportes.setAdapter(adapter);
                 binding.rvReportes.setLayoutManager(new LinearLayoutManager(requireContext()));
             }
@@ -69,14 +71,14 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
-    class IncidenciaAdapter extends FirebaseRecyclerAdapter<Reporte, IncidenciaAdapter.IncidenciaViewholder> {
-        public IncidenciaAdapter(@NonNull FirebaseRecyclerOptions<Reporte> options) {
+    class ReporteAdapter extends FirebaseRecyclerAdapter<Reporte, ReporteAdapter.ReporteViewholder> {
+        public ReporteAdapter(@NonNull FirebaseRecyclerOptions<Reporte> options) {
             super(options);
         }
 
         @Override
         protected void onBindViewHolder(
-        @NonNull IncidenciaViewholder holder, int position, @NonNull Reporte model
+        @NonNull ReporteViewholder holder, int position, @NonNull Reporte model
             ) {
 
             holder.binding.txtDescripcio.setText(model.getProblema());
@@ -85,20 +87,20 @@ public class DashboardFragment extends Fragment {
 
         @NonNull
         @Override
-        public IncidenciaViewholder onCreateViewHolder(
+        public ReporteViewholder onCreateViewHolder(
         @NonNull ViewGroup parent, int viewType
             ) {
-            return new IncidenciaViewholder(RvReportesBinding
+            return new ReporteViewholder(RvReportesBinding
                     .inflate(
                     LayoutInflater.from(parent.getContext()),
                     parent, false));
         }
 
-        class IncidenciaViewholder extends RecyclerView.ViewHolder {
+        class ReporteViewholder extends RecyclerView.ViewHolder {
             RvReportesBinding
                     binding;
 
-            public IncidenciaViewholder(RvReportesBinding
+            public ReporteViewholder(RvReportesBinding
                                                 binding) {
                 super(binding.getRoot());
                 this.binding = binding;

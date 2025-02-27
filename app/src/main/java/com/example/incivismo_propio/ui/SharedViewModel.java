@@ -77,13 +77,6 @@ public class SharedViewModel extends AndroidViewModel {
         return currentAddress;
     }
 
-    public MutableLiveData<String> getButtonText() {
-        return buttonText;
-    }
-
-    public MutableLiveData<Boolean> getProgressBar() {
-        return progressBar;
-    }
 
     //pongo public para que en el main no de error
     //live para comprobar los permisos
@@ -100,6 +93,7 @@ public class SharedViewModel extends AndroidViewModel {
         }
     };
 
+    //requisitos para las solicitudes de ubicación, esto devuelve la solicitud para la localizacion
     private LocationRequest getLocationRequest() {
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
@@ -108,6 +102,8 @@ public class SharedViewModel extends AndroidViewModel {
         return locationRequest;
     }
 
+
+    //para que intercambie la localización, en el homeFragment se usa
     public void switchTrackingLocation() {
         if (!mTrackingLocation) {
             startTrackingLocation(true);
@@ -118,6 +114,7 @@ public class SharedViewModel extends AndroidViewModel {
     }
 
     //pongo public para que en el main no de error
+    //inicia el seguimiento
     @SuppressLint("MissingPermission")
     public void startTrackingLocation(boolean needsChecking) {
         //si no tiene permisos lo comprovamos
@@ -140,6 +137,7 @@ public class SharedViewModel extends AndroidViewModel {
     }
 
 
+    //para el seguimiento
     private void stopTrackingLocation() {
         if (mTrackingLocation) {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -149,6 +147,7 @@ public class SharedViewModel extends AndroidViewModel {
         }
     }
 
+    //obtiene la localizacion
     private void fetchAddress(Location location) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
