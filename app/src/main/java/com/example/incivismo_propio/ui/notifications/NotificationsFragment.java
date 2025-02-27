@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private FirebaseAuth auth;
     private DatabaseReference camposFutbolRef;
+
 
 
 
@@ -74,9 +76,19 @@ public class NotificationsFragment extends Fragment {
         compassOverlay.enableCompass();
         binding.map.getOverlays().add(compassOverlay);
 
+        auth = FirebaseAuth.getInstance();
+
         // Conectar a Firebase y obtener la referencia de los campos de fútbol
         DatabaseReference base = FirebaseDatabase.getInstance().getReference();
-        camposFutbolRef = base.child("campos_futbol");
+        //quito los campos y lo cojo de lo que reporto
+        DatabaseReference users = base.child("users");
+
+        DatabaseReference baseUID = users.child(auth.getUid());
+
+        camposFutbolRef = baseUID.child("incidencies");
+
+        Log.d("III",  camposFutbolRef.toString());
+
 
         // Cargar marcadores de campos de fútbol desde Firebase
         camposFutbolRef.addChildEventListener(new ChildEventListener() {
@@ -85,22 +97,27 @@ public class NotificationsFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
                 if (snapshot.exists()) {
-                    String nombre = snapshot.child("nombre").getValue(String.class);
+                    //si no es un numero se cierra
+                    Reporte reporte = snapshot.getValue(Reporte.class);
+                    String nombre = snapshot.child("problema").getValue(String.class);
                     Double latitud = snapshot.child("latitud").getValue(Double.class);
                     Double longitud = snapshot.child("longitud").getValue(Double.class);
+                    Log.d("BB", latitud + " " + longitud);
 
-                    if (nombre != null && latitud != null && longitud != null) {
-                        GeoPoint location = new GeoPoint(latitud, longitud);
+                        if (reporte != null) {
+                            GeoPoint location = new GeoPoint(latitud, longitud);
 
-                        Marker marker = new Marker(binding.map);
-                        marker.setPosition(location);
-                        marker.setTitle(nombre);
-                        marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); //es el bicho eso
+                            Marker marker = new Marker(binding.map);
+                            marker.setPosition(location);
+                            marker.setTitle(nombre);
+                            marker.setIcon(requireContext().getDrawable(R.drawable.ic_marca_campo)); //es el bicho eso
+                            marker.setSnippet(reporte.getUbicacion());
 
-                        binding.map.getOverlays().add(marker);
-                        binding.map.invalidate();
+                            binding.map.getOverlays().add(marker);
+                            //binding.map.invalidate();
+                        }
                     }
-                }
+
             }
 
             @Override

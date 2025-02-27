@@ -115,11 +115,13 @@ public class HomeFragment extends Fragment {
         binding.buttonReportar.setOnClickListener(button -> {
             Reporte reporte = new Reporte();
             reporte.setUbicacion(binding.editTextUbi.getText().toString());
-            reporte.setLatitud(binding.editTextLatitud.getText().toString());
-            reporte.setLongitud(binding.editTextLongitud.getText().toString());
+            //para que si hay un espacio lo junte todo el .trim
+            double latitud = Double.parseDouble(binding.editTextLatitud.getText().toString().trim());
+            double longitud = Double.parseDouble(binding.editTextLongitud.getText().toString().trim());
             reporte.setProblema(binding.editTextProblema.getText().toString());
 
-
+            reporte.setLongitud(longitud);
+            reporte.setLatitud(latitud);
 
             DatabaseReference base = FirebaseDatabase.getInstance().getReference();
             DatabaseReference users = base.child("users");
@@ -208,7 +210,7 @@ public class HomeFragment extends Fragment {
         //binding.editTextUbi.setText("Carregant...");
         //binding.loading.setVisibility(ProgressBar.VISIBLE);
         mTrackingLocation = true;
-        binding.buttonBuscarCampos.setText("Aturar el seguiment de la ubicació");
+        //binding.buttonBuscarCampos.setText("Aturar el seguiment de la ubicació");
     }
 
     //coverte la localizacion en texto, si no, nos dice el erroe
@@ -294,7 +296,7 @@ public class HomeFragment extends Fragment {
         if (mTrackingLocation) {
             //binding.loading.setVisibility(ProgressBar.INVISIBLE);
             mTrackingLocation = false;
-            binding.buttonBuscarCampos.setText("Comença a seguir la ubicació");
+            //binding.buttonBuscarCampos.setText("Comença a seguir la ubicació");
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 
         }
