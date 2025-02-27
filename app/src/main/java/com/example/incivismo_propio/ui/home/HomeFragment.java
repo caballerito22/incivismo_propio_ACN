@@ -93,8 +93,8 @@ public class HomeFragment extends Fragment {
         });
         //lo se usa aqui también se puede usar en el notification
         sharedViewModel.getCurrentLatLng().observe(getViewLifecycleOwner(), latlng -> {
-            binding.editTextLongitud.setText(String.valueOf(latlng.latitude));
-            binding.editTextLatitud.setText(String.valueOf(latlng.longitude));
+            binding.editTextLongitud.setText(String.valueOf(latlng.longitude));
+            binding.editTextLatitud.setText(String.valueOf(latlng.latitude));
         });
 
 
